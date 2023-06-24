@@ -7,6 +7,8 @@
 // ICPC Challenge
 // Sturgill, Baylor University
 
+const int ROUNDS = 180;
+
 /** Width and height of the playing field. */
 const int SIZE = 31;
   
@@ -76,6 +78,23 @@ struct Child {
 
     // How many more turns this child is dazed.
     int dazed;
+
+    const int holdingSize() const {
+        switch (holding) {
+            case HOLD_EMPTY: return 0;  // nothing
+            case HOLD_P1:    return 1;     // Child is holding one unit of powdered snow
+            case HOLD_P2:    return 2;     // Child is holding two units of powdered snow
+            case HOLD_P3:    return 3;     // Child is holding three units of powdered snow
+            case HOLD_S1:    return 1;     // Child is holding one small snowball
+            case HOLD_S2:    return 2;     // Child is holding two small snowballs
+            case HOLD_S3:    return 3;     // Child is holding three small snowballs
+            case HOLD_M:     return 2;      // Child is holding one medium snowball
+            case HOLD_L:     return 3;      // Child is holding one large snowball
+        }
+        return 0;
+    }
 };
+
+const int INIT = 1001001001;
 
 #endif

@@ -12,7 +12,6 @@ using namespace std;
 
 const int ATTACK_RANGE = 24;
 const double EPS = 1e-12;
-const int INIT = 1001001001;  // can't use -1 since (-1, -1) is a valid target
 
 bool willHitTarget(const vector <vector<Position>>& field, const Child& us, const Child& them, int x, int y) {
     int start_height = us.standing ? 9 : 6;
@@ -48,7 +47,7 @@ complex<int> targetToAttack(const vector <vector<Position>>& field, const Child&
             }
         }
     }
-    return complex<int>(INIT, INIT);
+    return complex<int>(INIT, INIT);  // can't use -1 since (-1, -1) is a valid target
 }
 
 // returns how easy it is to attack this target, on a scale from 0 (impossible) to 10 (very easy)
@@ -65,4 +64,30 @@ int attackability(const vector <vector<Position>>& field, const Child& us, const
     int distanceScore = round(20 / (abs(usPos - themPos) + 1));  // prioritize closer targets
     int dazedBonus = (them.dazed + 1) / 2;
     return distanceScore + dazedBonus;
+}
+
+int pickTarget(const vector<Child>& ourTeam, const vector<Child>& theirTeam, const vector<pair<int, complex<int>>>& theirLastPosition, complex<int>& targetPos) {
+    int idx = -1, targetScore = 100;  // set a threshold to avoid attacking unappealing targets
+    for (int i = 0; i < theirTeam.size(); i++) {
+        int x = theirLastPosition[i].second.real(), y = theirLastPosition[i].second.imag();
+        if (x == UNKNOWN || y == UNKNOWN) continue;
+
+        complex<double> theirPos(x, y);
+        double dist = 0;
+        for (const Child& us: ourTeam) {
+            complex<double> ourPos(us.x, us.y);
+            dist = max(dist, abs(theirPos - ourPos));
+        }
+        int distScore = 2000 / dist;
+        int dazedScore = theirTeam[i].dazed * 100;
+        int decayScore = theirLastPosition[i].first / 4;
+        // TODO: try attacking opponents that seem isolated?
+        int score = distScore + dazedScore - (decayScore * decayScore);
+        if (targetScore < score) {
+            targetScore = score;
+            idx = i;
+            targetPos = theirPos;
+        }
+    }
+    return idx;
 }
