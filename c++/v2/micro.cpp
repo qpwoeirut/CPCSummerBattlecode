@@ -41,7 +41,6 @@ bool willHitTarget(const vector <vector<Position>>& field, const Child& us, cons
 // if we want to attack "them", what location should we throw the snowball at?
 // tries all reachable locations because reversing the snowball path is annoying and runs into edge cases
 complex<int> targetToAttack(const vector <vector<Position>>& field, const Child& us, const Child& them) {
-//    cerr << "targetToAttack: " << us.x << ',' << us.y << ' ' << them.x << ',' << them.y << endl;
     for (int x = -ATTACK_RANGE; x < SIZE + ATTACK_RANGE; x++) {
         for (int y = -ATTACK_RANGE; y < SIZE + ATTACK_RANGE; y++) {
             if (willHitTarget(field, us, them, x, y)) {

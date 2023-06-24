@@ -36,7 +36,6 @@ const int chX[12] = { -1,  0,  1,  0, -2, -1,  0,  1,  2,  1,  0, -1 };
 const int chY[12] = {  0, -1,  0,  1,  0, -1, -2, -1,  0,  1,  2,  1 };
 int moves[12] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 bool moveRandomly(vector<vector<Position>>& field, const Child& us, complex<int>& returnPos) {
-//    cerr << "moveRandomly: " << us.x << ' ' << us.y << endl;
     sort(moves, moves+12);
 
     int n = us.standing ? 12 : 4;
