@@ -75,7 +75,7 @@ vector< vector< int > > height( SIZE, vector< int >( SIZE ) );
 vector< vector< int > > ground( SIZE, vector< int >( SIZE ) );
 
 // List of current information about each child.
-vector< Child > cList( CCOUNT * 2 );
+vector< Child > cList( CHILDREN * 2 );
 
 // Try to pick a next move.  Return false if the child just
 // turns in place and chooses no move.
@@ -136,7 +136,7 @@ bool chooseMove( int i ) {
     }
 
     // See if we should throw a snowball at an opponent.
-    for ( int j = CCOUNT; j < CCOUNT * 2; j++ ) {
+    for ( int j = CHILDREN; j < CHILDREN * 2; j++ ) {
       if ( cList[ j ].x >= 0 ) {
         int dx = cList[ j ].x - child.x;
         int dy = cList[ j ].y - child.y;
@@ -239,7 +239,7 @@ int main() {
         cin >> cList[ i ].y;
 
         // Fill in the child's side.
-        cList[ i ].color = i / CCOUNT;
+        cList[ i ].color = i / CHILDREN;
 
         // Read the child's stanse, what he's holding and how much
         // longer he's dazed.
@@ -260,7 +260,7 @@ int main() {
     }
 
     // Choose an action for each child.
-    for ( int i = 0; i < CCOUNT; i++ ) {
+    for ( int i = 0; i < CHILDREN; i++ ) {
       // Try up to three times to get a useful move
       int tryCount = 0;
 
