@@ -68,6 +68,9 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
 
     if (us.dazed) return Move::IDLE;
 
+    complex<int> snowmanPos;
+    SnowmanStage snowmanStage = nearbySnowmanStage(field, us, snowmanPos);
+
     complex<int> targetPos;
     int targetIdx = pickTarget(ourTeam, theirTeam, theirLastPosition, targetPos);  // check if there's a threat/target
     if (targetIdx != -1) {
@@ -84,13 +87,17 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
                 return Move::THROW;
             }
         }
+
+        if (snowmanStage == SnowmanStage::BASE_AND_BODY) {  // finish snowman
+            return buildSnowman(field, currentChildIdx, ourTeam, returnPos);
+        }
+
         Move move = prepareToAttack(field, us, targetPos, returnPos);
         if (move != Move::IDLE) return move;
     }
 
-    complex<int> snowmanPos;
-    SnowmanStage snowmanStage = nearbySnowmanStage(field, us, snowmanPos);
-    if (turnNum <= 15 || snowmanStage != NONE) {
+    // build snowmen at end of game, in case we're facing campers
+    if (turnNum <= 15 || turnNum >= ROUNDS - 40 || snowmanStage != NONE) {
         return buildSnowman(field, currentChildIdx, ourTeam, returnPos);
     }
 
