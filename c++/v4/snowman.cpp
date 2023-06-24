@@ -13,22 +13,26 @@ const vector<complex<int>> SNOWMAN_POSITIONS[] = {
         vector<complex<int>>{
                 complex<int>(6, 14),
                 complex<int>(6, 23),
-                complex<int>(6, 27)
+                complex<int>(6, 27),
+                complex<int>(16, 28)
         },
         vector<complex<int>>{
                 complex<int>(5, 5),
                 complex<int>(17, 24),
-                complex<int>(14, 18)
+                complex<int>(14, 18),
+                complex<int>(24, 28)
         },
         vector<complex<int>>{
                 complex<int>(9, 9),
                 complex<int>(24, 17),
-                complex<int>(18, 14)
+                complex<int>(18, 14),
+                complex<int>(28, 24)
         },
         vector<complex<int>>{
                 complex<int>(14, 6),
                 complex<int>(23, 6),
-                complex<int>(27, 6)
+                complex<int>(27, 6),
+                complex<int>(28, 16)
         }
 };
 
