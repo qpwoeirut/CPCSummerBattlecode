@@ -78,7 +78,7 @@ Move buildSnowman(vector<vector<Position>>& field, int currentChildIdx, const ve
     double dist;
     int positionIdx = nearestPosition(field, us, SNOWMAN_POSITIONS[currentChildIdx], GROUND_SMR, dist);
     if (positionIdx == -1) {
-//        cerr << "ERROR: unable to find snowman position for child " << currentChildIdx << endl;
+        cerr << "ERROR: unable to find snowman position for child " << currentChildIdx << endl;
         return Move::IDLE;
     }
     // find nearestAvailable in case there's a tree in the way
@@ -98,7 +98,7 @@ Move buildSnowman(vector<vector<Position>>& field, int currentChildIdx, const ve
             // technically HOLD_S2 and HOLD_S3 work too for sizeToDrop, but it's unlikely those will come up
             return buildPart(field, us, snowmanPos, HOLD_S1, HOLD_P1, returnPos);
         case BUILT:
-//            cerr << "ERROR: found a built snowman for child " << currentChildIdx << " at " << snowmanPos.real() << ',' << snowmanPos.imag() << endl;
+            cerr << "ERROR: found a built snowman for child " << currentChildIdx << " at " << snowmanPos.real() << ',' << snowmanPos.imag() << endl;
             break;
     }
     if (moveRandomly(field, us, returnPos)) return movement(us);
