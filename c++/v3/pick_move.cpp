@@ -64,9 +64,9 @@ Move stockpileSnowballs(vector<vector<Position>>& field, const vector<Child>& ou
 Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const vector <Child>& ourTeam,
                const vector <Child>& theirTeam, const vector<pair<int, complex<int>>>& theirLastPosition,
                int currentChildIdx, complex<int>& returnPos) {
-    if (us.dazed) return Move::IDLE;
-
     const Child& us = ourTeam[currentChildIdx];
+
+    if (us.dazed) return Move::IDLE;
 
     complex<int> targetPos;
     int targetIdx = pickTarget(ourTeam, theirTeam, theirLastPosition, targetPos);  // check if there's a threat/target
