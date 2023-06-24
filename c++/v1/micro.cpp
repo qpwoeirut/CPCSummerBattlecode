@@ -4,6 +4,6 @@
 
 #include "Const.h"
 
-bool shouldAttack(vector <vector<int>> height, vector <vector<int>> ground, Child child) {
-    return false;
+bool shouldAttack(const vector <vector<int>>& height, const vector <vector<int>>& ground, const Child& child) {
+
 }

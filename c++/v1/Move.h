@@ -29,11 +29,11 @@ std::string move_to_str(const Move move) {
     throw "Enum did not match any options; this should never happen";
 }
 
-void print_move(Move move) {
+void print_move(const Move move) {
     assert(move == IDLE || move == CROUCH || move == STAND);
     std::cout << move_to_str(move) << std::endl;
 }
-void print_move(Move move, std::complex<int> pos) {
+void print_move(const Move move, const std::complex<int>& pos) {
     if (move == IDLE || move == CROUCH || move == STAND) {
         print_move(move);
     } else {

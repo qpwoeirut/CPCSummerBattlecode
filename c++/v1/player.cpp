@@ -17,7 +17,7 @@ void readField(vector<vector<int>>& height, vector<vector<int>>& ground) {
         }
     }
 }
-Child readChild(int color) {
+Child readChild(const int color) {
     Child child;
     string token;
     cin >> token;
