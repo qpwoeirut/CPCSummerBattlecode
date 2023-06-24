@@ -83,17 +83,17 @@ int main() {
     int turnNum;
     cin >> turnNum;
     while (turnNum >= 0) {
-//        cerr << "Turn: " << turnNum << endl;
+        cerr << "Turn: " << turnNum << endl;
         cin >> score[RED] >> score[BLUE];
         readField(field);
         readChildren(field, ourTeam, theirTeam, theirLastPosition);
 
         for (int i = 0; i < CHILDREN; i++) {
-//            cerr << "Calculating move for child " << i << endl;
+            cerr << "Calculating move for child " << i << endl;
             complex<int> pos(0, 0);
             Move move = pick_move(turnNum, score, field, ourTeam, theirTeam, theirLastPosition, i, pos);
             print_move(move, pos);
-//            cerr << "Move for child " << i << ": " << move_to_str(move) << ' ' << pos.real() << ' ' << pos.imag() << endl;
+            cerr << "Move for child " << i << ": " << move_to_str(move) << ' ' << pos.real() << ' ' << pos.imag() << endl;
         }
 
         cin >> turnNum;
