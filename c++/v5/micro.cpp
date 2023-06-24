@@ -41,6 +41,32 @@ bool willHitTarget(const vector <vector<Position>>& field, const Child& us, cons
     return false;
 }
 
+bool willHitTarget(const vector <vector<Position>>& field, const Child& us, const complex<int>& toAttack, const int height, int x, int y) {
+    int start_height = us.standing ? 9 : 6;
+
+    complex<double> start(us.x, us.y);
+    complex<double> target(x, y);
+    if (abs(start - target) > ATTACK_RANGE + EPS) return false;
+
+    const int n = max(abs(x - us.x), abs(y - us.y));
+    for (int step = 1; step <= n; step++) {  // seems that C++ round already rounds away from 0
+        int curX = us.x + round((double)(step * (x - us.x)) / n);
+        int curY = us.y + round((double)(step * (y - us.y)) / n);
+        int curH = start_height - round((double)(9 * step) / n);
+
+        if (curX == toAttack.real() && curY == toAttack.imag()) {
+            return curH == height;
+        }
+        if (inBounds(curX, curY) && (curH <= field[curX][curY].height || field[curX][curY].ground == GROUND_TREE)) {
+            return false;
+        }
+        if (inBounds(curX, curY) && field[curX][curY].childTeam != -1) {  // avoid hitting a child
+            return false;
+        }
+    }
+    return false;
+}
+
 // if we want to attack "them", what location should we throw the snowball at?
 // tries all reachable locations because reversing the snowball path is annoying and runs into edge cases
 complex<int> targetToAttack(const vector <vector<Position>>& field, const Child& us, const Child& them) {
@@ -49,6 +75,23 @@ complex<int> targetToAttack(const vector <vector<Position>>& field, const Child&
     for (int x = -ATTACK_RANGE; x < SIZE + ATTACK_RANGE; x++) {
         for (int y = -ATTACK_RANGE; y < SIZE + ATTACK_RANGE; y++) {
             if (willHitTarget(field, us, them, x, y)) {
+                double score = abs(complex<double>(us.x - x, us.y - y));  // further distance -> faster throw
+                if (bestScore < score) {
+                    bestScore = score;
+                    target = complex<int>(x, y);
+                }
+            }
+        }
+    }
+    return target;
+}
+
+complex<int> targetToAttack(const vector <vector<Position>>& field, const Child& us, const complex<int>& toAttack, const int height) {
+    double bestScore = 0;
+    complex<int> target(INIT, INIT);  // can't use -1 since (-1, -1) is a valid target
+    for (int x = -ATTACK_RANGE; x < SIZE + ATTACK_RANGE; x++) {
+        for (int y = -ATTACK_RANGE; y < SIZE + ATTACK_RANGE; y++) {
+            if (willHitTarget(field, us, toAttack, height, x, y)) {
                 double score = abs(complex<double>(us.x - x, us.y - y));  // further distance -> faster throw
                 if (bestScore < score) {
                     bestScore = score;
@@ -109,6 +152,26 @@ bool attack(const vector<vector<Position>>& field, const Child& us, vector<Child
             returnPos = targetToAttack(field, us, theirTeam[attackIdx]);
             theirTeam[attackIdx].targetClaimed = true;
             return true;
+        }
+    }
+    return false;
+}
+
+bool attackSnowman(const vector<vector<Position>>& field, const Child& us, complex<int>& returnPos) {
+    if (canAttack(us)) {
+        cerr << "attackSnowman us: " << us.x << ',' << us.y << ' ' << us.standing << endl;
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                if (field[x][y].ground == GROUND_SMB) {
+                    cerr << x << ' ' << y << ' ' << field[x][y].height << endl;
+                    complex<int> target = targetToAttack(field, us, complex<int>(x, y), field[x][y].height);
+                    if (target.real() != INIT && target.imag() != INIT) {
+                        cerr << target.real() << ' ' << target.imag() << endl;
+                        returnPos = target;
+                        return true;
+                    }
+                }
+            }
         }
     }
     return false;

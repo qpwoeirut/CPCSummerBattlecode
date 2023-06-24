@@ -77,14 +77,18 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
 
     if (us.dazed) return Move::IDLE;
 
-    complex<int> snowmanPos;
-    SnowmanStage snowmanStage = nearbySnowmanStage(field, us, snowmanPos);
-
     if (attack(field, us, theirTeam, theirLastPosition, returnPos)) {
         return Move::THROW;
     }
+
+    complex<int> snowmanPos;
+    SnowmanStage snowmanStage = nearbySnowmanStage(field, us, snowmanPos);
     if (snowmanStage == SnowmanStage::BASE_AND_BODY) {  // finish snowman
         return buildSnowman(field, currentChildIdx, ourTeam, returnPos);
+    }
+
+    if (attackSnowman(field, us, returnPos)) {
+        return Move::THROW;
     }
 
     complex<int> targetPos;
