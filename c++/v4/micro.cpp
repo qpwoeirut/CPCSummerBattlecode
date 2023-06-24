@@ -4,6 +4,7 @@
 
 #include "Const.h"
 #include "util.h"
+#include <algorithm>
 #include <vector>
 #include <complex>
 
@@ -91,4 +92,21 @@ int pickTarget(const vector<Child>& ourTeam, const vector<Child>& theirTeam, con
         }
     }
     return idx;
+}
+
+bool attack(const vector<vector<Position>>& field, const Child& us, const vector<Child>& theirTeam, int targetIdx, complex<int>& returnPos) {
+    if (canAttack(us)) {
+        vector<int> attackScore(theirTeam.size());
+        for (int i = 0; i < theirTeam.size(); i++) {
+            attackScore[i] = attackability(field, us, theirTeam[i]);
+        }
+        int attackIdx = max_element(attackScore.begin(), attackScore.end()) - attackScore.begin();
+        if (attackScore[targetIdx] > 0) attackIdx = targetIdx;  // override
+
+        if (attackScore[attackIdx] > 0) {  // attack!
+            returnPos = targetToAttack(field, us, theirTeam[attackIdx]);
+            return true;
+        }
+    }
+    return false;
 }

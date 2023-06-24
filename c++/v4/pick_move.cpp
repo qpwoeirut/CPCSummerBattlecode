@@ -83,20 +83,9 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
     complex<int> targetPos;
     int targetIdx = pickTarget(ourTeam, theirTeam, theirLastPosition, targetPos);  // check if there's a threat/target
     if (targetIdx != -1) {
-        if (canAttack(us)) {
-            vector<int> attackScore(theirTeam.size());
-            for (int i = 0; i < theirTeam.size(); i++) {
-                attackScore[i] = attackability(field, us, theirTeam[i]);
-            }
-            int attackIdx = max_element(attackScore.begin(), attackScore.end()) - attackScore.begin();
-            if (attackScore[targetIdx] > 0) attackIdx = targetIdx;  // override
-
-            if (attackScore[attackIdx] > 0) {  // attack!
-                returnPos = targetToAttack(field, us, theirTeam[attackIdx]);
-                return Move::THROW;
-            }
+        if (attack(field, us, theirTeam, targetIdx, returnPos)) {
+            return Move::THROW;
         }
-
         if (snowmanStage == SnowmanStage::BASE_AND_BODY) {  // finish snowman
             return buildSnowman(field, currentChildIdx, ourTeam, returnPos);
         }
