@@ -94,8 +94,9 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
     }
 
     // build snowmen at end of game, in case we're facing campers
-    if (turnNum <= 15 || turnNum >= ROUNDS - 40 || snowmanStage != NONE) {
-        return buildSnowman(field, currentChildIdx, ourTeam, returnPos);
+    if (turnNum <= 15 || turnNum >= ROUNDS - 80 || snowmanStage != NONE) {
+        Move move = buildSnowman(field, currentChildIdx, ourTeam, returnPos);
+        if (move != Move::IDLE) return move;
     }
 
     return stockpileSnowballs(field, ourTeam, us, returnPos);

@@ -13,18 +13,22 @@ const vector<complex<int>> SNOWMAN_POSITIONS[] = {
         vector<complex<int>>{
                 complex<int>(6, 14),
                 complex<int>(6, 23),
+                complex<int>(6, 27)
         },
         vector<complex<int>>{
                 complex<int>(5, 5),
-                complex<int>(17, 24)
+                complex<int>(17, 24),
+                complex<int>(14, 18)
         },
         vector<complex<int>>{
                 complex<int>(9, 9),
-                complex<int>(24, 17)
+                complex<int>(24, 17),
+                complex<int>(18, 14)
         },
         vector<complex<int>>{
                 complex<int>(14, 6),
-                complex<int>(23, 6)
+                complex<int>(23, 6),
+                complex<int>(27, 6)
         }
 };
 
@@ -52,12 +56,11 @@ SnowmanStage snowmanStageAt(const vector<vector<Position>>& field, const complex
 Move buildPart(vector<vector<Position>>& field, const Child& us, const complex<int>& snowmanPos, int sizeToDrop, int sizeToCrush, complex<int>& returnPos) {
     if (us.standing) return Move::CROUCH;
     if (us.holding == sizeToDrop) {
-        returnPos = snowmanPos;
-        return Move::DROP;
+        if (dropItemTargeted(field, us, snowmanPos, returnPos)) return Move::DROP;
     } else if (us.holding == sizeToCrush) {
         return Move::CRUSH;
     } else if (us.holding == HOLD_S1 || us.holding == HOLD_S2 || us.holding == HOLD_S3 || us.holding == HOLD_M || us.holding == HOLD_L || (us.holding == HOLD_P3 && (sizeToCrush == HOLD_P2 || sizeToCrush == HOLD_P1)) || (us.holding == HOLD_P2 && sizeToCrush == HOLD_P1)) {
-        if (dropItem(field, us, snowmanPos, returnPos)) return Move::DROP;
+        if (dropItemAvoid(field, us, snowmanPos, returnPos)) return Move::DROP;
     } else {
         if (pickUpSnow(field, us, GROUND_EMPTY, returnPos)) return Move::PICKUP;
     }

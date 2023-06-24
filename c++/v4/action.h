@@ -24,12 +24,20 @@ bool pickUpSnow(vector <vector<Position>>& field, const Child& us, int toPickUp,
     return false;
 }
 
+bool dropItemTargeted(const vector<vector<Position>>& field, const Child& us, const complex<int>& targetPos, complex<int>& returnPos) {
+    const int x = targetPos.real(), y = targetPos.imag();
+    if (inBounds(x, y) && (x != us.x || y != us.y) && abs(x - us.x) <= 1 && abs(y - us.y) <= 1 && field[x][y].ground != GROUND_TREE && field[x][y].height + us.holdingSize() <= 9 && field[x][y].childTeam == -1) {
+        returnPos = targetPos;
+        return true;
+    }
+    return false;
+}
 
-bool dropItem(vector<vector<Position>>& field, const Child& us, const complex<int>& avoid, complex<int>& returnPos) {
+bool dropItemAvoid(const vector<vector<Position>>& field, const Child& us, const complex<int>& avoid, complex<int>& returnPos) {
     for (int x = us.x - 1; x <= us.x + 1; x++) {
         for (int y = us.y - 1; y <= us.y + 1; y++) {
-            if (inBounds(x, y) && (x != us.x || y != us.y) && field[x][y].ground == GROUND_EMPTY && field[x][y].height + us.holdingSize() <= 9 && field[x][y].childTeam == -1 && (avoid.real() != x || avoid.imag() != y)) {
-                returnPos = complex<int>(x, y);
+            complex<int> targetPos(x, y);
+            if (dropItemTargeted(field, us, targetPos, returnPos)) {
                 return true;
             }
         }
@@ -37,9 +45,9 @@ bool dropItem(vector<vector<Position>>& field, const Child& us, const complex<in
     return false;
 }
 
-bool dropItem(vector<vector<Position>>& field, const Child& us, complex<int>& returnPos) {
+bool dropItem(const vector<vector<Position>>& field, const Child& us, complex<int>& returnPos) {
     complex<int> invalidPos(-1, -1);
-    return dropItem(field, us, invalidPos, returnPos);
+    return dropItemAvoid(field, us, invalidPos, returnPos);
 }
 
 #endif //ACTION_H
