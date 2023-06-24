@@ -26,12 +26,14 @@ bool willHitTarget(const vector <vector<Position>>& field, const Child& us, cons
         int curY = us.y + round((double)(step * (y - us.y)) / n);
         int curH = start_height - round((double)(9 * step) / n);
 
-        if (inBounds(curX, curY) && (curH <= field[curX][curY].height || field[curX][curY].ground == GROUND_TREE)) return false;
+        if (inBounds(curX, curY) && (curH <= field[curX][curY].height || field[curX][curY].ground == GROUND_TREE ||
+                                           field[curX][curY].childTeam == RED)) {  // avoid friendly fire
+            return false;
+        }
         if (curX == them.x && curY == them.y) {
             // TODO: if a child crouches in snow of height 6, will they get hit? this assumes they don't
             return them.standing || curH <= 6;
         }
-        // TODO does friendly fire exist? or do the snowballs pass through your teammates? this assumes they do
     }
     return false;
 }
