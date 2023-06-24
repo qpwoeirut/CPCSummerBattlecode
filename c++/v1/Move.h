@@ -10,8 +10,6 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-#endif //MOVE_H
-
 enum Move { IDLE, CROUCH, STAND, RUN, CRAWL, PICKUP, CRUSH, THROW, CATCH };
 
 std::string move_to_str(const Move move) {
@@ -40,3 +38,5 @@ void print_move(const Move move, const std::complex<int>& pos) {
         std::cout << move_to_str(move) << ' ' << pos.real() << ' ' << pos.imag() << std::endl;
     }
 }
+
+#endif //MOVE_H
