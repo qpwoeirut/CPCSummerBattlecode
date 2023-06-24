@@ -21,7 +21,7 @@ bool canMoveTo(vector<vector<Position>>& field, const Child& us, int targetX, in
         int curX = us.x + round((double)(step * (targetX - us.x)) / n);
         int curY = us.y + round((double)(step * (targetY - us.y)) / n);
 
-        if (field[curX][curY].ground == GROUND_TREE || field[curX][curY].childTeam != -1 || (!mark && field[curX][curY].movementTaken)) return false;
+        if (field[curX][curY].ground == GROUND_TREE || field[curX][curY].childTeam != -1 || field[curX][curY].height >= 6 || (!mark && field[curX][curY].movementTaken)) return false;
         if (mark) field[curX][curY].movementTaken = true;
         if (curX == targetX && curY == targetY) return true;
     }
