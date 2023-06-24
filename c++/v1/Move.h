@@ -10,7 +10,7 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-enum Move { IDLE, CROUCH, STAND, RUN, CRAWL, PICKUP, CRUSH, THROW, CATCH };
+enum Move { IDLE, CROUCH, STAND, RUN, CRAWL, PICKUP, DROP, CRUSH, THROW, CATCH };
 
 std::string move_to_str(const Move move) {
     switch(move) {
@@ -20,6 +20,7 @@ std::string move_to_str(const Move move) {
         case RUN: return "run";
         case CRAWL: return "crawl";
         case PICKUP: return "pickup";
+        case DROP: return "drop";
         case CRUSH: return "crush";
         case THROW: return "throw";
         case CATCH: return "catch";
