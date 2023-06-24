@@ -16,16 +16,25 @@
 using namespace std;
 
 Move prepareToAttack(vector<vector<Position>>& field, const Child& us, const complex<int>& targetPos, complex<int>& returnPos) {
-    if (us.holding == HOLD_P1) return Move::CRUSH;
-    if (us.holding == HOLD_EMPTY) {  // need to get a snowball to throw
-        if (us.standing) return Move::CROUCH;
-        if (pickUpSnow(field, us, GROUND_S, returnPos)) return Move::PICKUP;
-        if (pickUpSnow(field, us, GROUND_EMPTY, returnPos)) return Move::PICKUP;
-        if (moveRandomly(field, us, returnPos)) return Move::CRAWL;  // in case there's no snow left to pick up
+    switch(us.holding) {
+        case HOLD_EMPTY:
+            if (us.standing) return Move::CROUCH;
+            if (pickUpSnow(field, us, GROUND_S, returnPos)) return Move::PICKUP;
+            if (pickUpSnow(field, us, GROUND_EMPTY, returnPos)) return Move::PICKUP;
+            if (moveRandomly(field, us, returnPos)) return Move::CRAWL;  // in case there's no snow left to pick up
+            break;
+        case HOLD_P1:
+            return Move::CRUSH;
+        case HOLD_P2:
+        case HOLD_P3:
+        case HOLD_M:
+        case HOLD_L:
+            if (dropItem(field, us, returnPos)) return Move::DROP;
     }
 
     if (!us.standing) return Move::STAND;  // increase mobility
     if (moveToTarget(field, us, targetPos, returnPos)) return Move::RUN;
+    if (moveRandomly(field, us, returnPos)) return Move::RUN;
     return Move::IDLE;
 }
 
