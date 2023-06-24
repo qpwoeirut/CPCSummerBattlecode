@@ -15,11 +15,11 @@ enum SnowmanStage { NONE, BASE, BASE_AND_BODY };
 SnowmanStage nearbySnowmanStage(const vector<vector<Position>>& field, const Child& us, complex<int>& snowmanPos) {
     if (findAdjacent(field, us, GROUND_LM, snowmanPos) > 0) return BASE_AND_BODY;
     if (findAdjacent(field, us, GROUND_L, snowmanPos) > 0) return BASE;
+    snowmanPos = complex<int>(us.x + 1, us.y + 1);
     return NONE;
 }
 
 Move buildPart(vector<vector<Position>>& field, const Child& us, const complex<int>& snowmanPos, int sizeToDrop, int sizeToCrush, complex<int>& returnPos) {
-    cerr << "buildPart drop,crush,holding: " << sizeToDrop << ' ' << sizeToCrush << ' ' << us.holding << endl;
     if (us.standing) return Move::CROUCH;
     if (us.holding == sizeToDrop) {
         returnPos = snowmanPos;
@@ -27,10 +27,8 @@ Move buildPart(vector<vector<Position>>& field, const Child& us, const complex<i
     } else if (us.holding == sizeToCrush) {
         return Move::CRUSH;
     } else if (us.holding == HOLD_S1 || us.holding == HOLD_S2 || us.holding == HOLD_S3 || us.holding == HOLD_M || us.holding == HOLD_L || (us.holding == HOLD_P3 && (sizeToCrush == HOLD_P2 || sizeToCrush == HOLD_P1)) || (us.holding == HOLD_P2 && sizeToCrush == HOLD_P1)) {
-        cerr << "drop" << endl;
         if (dropItem(field, us, snowmanPos, returnPos)) return Move::DROP;
     } else {
-        cerr << "pickup" << endl;
         if (pickUpSnow(field, us, GROUND_EMPTY, returnPos)) return Move::PICKUP;
     }
     if (moveRandomly(field, us, returnPos)) return Move::CRAWL;
@@ -38,7 +36,6 @@ Move buildPart(vector<vector<Position>>& field, const Child& us, const complex<i
 }
 
 Move buildSnowman(vector<vector<Position>>& field, const Child& us, const vector<Child>& ourTeam, complex<int>& returnPos) {
-    cerr << "building snowman" << endl;
     int dist;
     int teammateIdx = nearestTeammate(us, ourTeam, dist);
     if (dist <= 2) {

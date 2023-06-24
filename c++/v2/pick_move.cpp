@@ -88,7 +88,7 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
 
     complex<int> snowmanPos;
     SnowmanStage snowmanStage = nearbySnowmanStage(field, us, snowmanPos);
-    if (turnNum <= 50 || snowmanStage != NONE) {
+    if (turnNum <= 15 || snowmanStage != NONE) {
         return buildSnowman(field, us, ourTeam, returnPos);
     }
 

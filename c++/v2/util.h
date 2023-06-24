@@ -57,8 +57,7 @@ int countAdjacent(const vector<vector<Position>>& field, const Child& us, int va
 bool findAdjacent(const vector<vector<Position>>& field, const Child& us, int value, complex<int>& position) {
     for (int x = us.x - 1; x <= us.x + 1; x++) {
         for (int y = us.y - 1; y <= us.y + 1; y++) {
-            if (x == us.x && y == us.y) continue;
-            if (inBounds(x, y) && field[x][y].ground == value) {
+            if (inBounds(x, y) && (x != us.x || y != us.y) && field[x][y].ground == value) {
                 position = complex<int>(x, y);
                 return true;
             }
