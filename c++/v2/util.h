@@ -23,6 +23,11 @@ bool inBounds(const int x, const int y) {
     return 0 <= x && x < SIZE && 0 <= y && y < SIZE;
 }
 
+bool canAttack(const Child& us) {
+    if (us.dazed > 0) return false;
+    return us.holding == HOLD_S1 || us.holding == HOLD_S2 || us.holding == HOLD_S3;
+}
+
 // dist = max(|x1 - x2|, |y1 - y2|)
 int nearestTeammate(const Child& us, const vector<Child>& ourTeam, int& minDist) {
     int idx = -1;
@@ -47,6 +52,19 @@ int countAdjacent(const vector<vector<Position>>& field, const Child& us, int va
         }
     }
     return ct;
+}
+
+bool findAdjacent(const vector<vector<Position>>& field, const Child& us, int value, complex<int>& position) {
+    for (int x = us.x - 1; x <= us.x + 1; x++) {
+        for (int y = us.y - 1; y <= us.y + 1; y++) {
+            if (x == us.x && y == us.y) continue;
+            if (inBounds(x, y) && field[x][y].ground == value) {
+                position = complex<int>(x, y);
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 #endif //UTIL_H

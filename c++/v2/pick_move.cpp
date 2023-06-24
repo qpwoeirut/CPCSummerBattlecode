@@ -5,42 +5,21 @@
 #include "Const.h"
 #include "Move.h"
 #include "util.h"
+#include "action.h"
 #include "micro.cpp"
-#include "movement.cpp"
+#include "movement.h"
+#include "snowman.cpp"
 #include <algorithm>
 #include <random>
 #include <vector>
 
 using namespace std;
 
-bool canAttack(const Child& us) {
-    if (us.dazed > 0) return false;
-    return us.holding == HOLD_S1 || us.holding == HOLD_S2 || us.holding == HOLD_S3;
-}
-
-bool snowmanPhase() {
-    return false;
-}
-
-bool pickUpSnow(vector <vector<Position>>& field, const Child& us, int toPickUp, complex<int>& returnPos) {
-    if (us.standing || !(us.holding == HOLD_EMPTY || us.holding == HOLD_S1 || us.holding == HOLD_S2)) return false;
-
-    for (int x = us.x - 1; x <= us.x + 1; x++) {
-        for (int y = us.y - 1; y <= us.y + 1; y++) {
-            if (inBounds(x, y) && field[x][y].height > 0 && field[x][y].ground == toPickUp && !field[x][y].pickupTaken && field[x][y].childTeam == -1) {
-                returnPos = complex<int>(x, y);
-                field[x][y].pickupTaken = true;
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 Move prepareToAttack(vector<vector<Position>>& field, const Child& us, const complex<int>& targetPos, complex<int>& returnPos) {
     if (us.holding == HOLD_P1) return Move::CRUSH;
     if (us.holding == HOLD_EMPTY) {  // need to get a snowball to throw
         if (us.standing) return Move::CROUCH;
+        if (pickUpSnow(field, us, GROUND_S, returnPos)) return Move::PICKUP;
         if (pickUpSnow(field, us, GROUND_EMPTY, returnPos)) return Move::PICKUP;
         if (moveRandomly(field, us, returnPos)) return Move::CRAWL;  // in case there's no snow left to pick up
     }
@@ -48,18 +27,6 @@ Move prepareToAttack(vector<vector<Position>>& field, const Child& us, const com
     if (!us.standing) return Move::STAND;  // increase mobility
     if (moveToTarget(field, us, targetPos, returnPos)) return Move::RUN;
     return Move::IDLE;
-}
-
-bool dropItem(vector<vector<Position>>& field, const Child& us, complex<int>& returnPos) {
-    for (int x = us.x - 1; x <= us.x + 1; x++) {
-        for (int y = us.y - 1; y <= us.y + 1; y++) {
-            if (inBounds(x, y) && field[x][y].ground == GROUND_EMPTY && field[x][y].height + us.holdingSize() <= 9 && field[x][y].childTeam == -1) {
-                returnPos = complex<int>(x, y);
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 Move stockpileSnowballs(vector<vector<Position>>& field, const vector<Child>& ourTeam, const Child& us, complex<int>& returnPos) {
@@ -94,7 +61,7 @@ Move stockpileSnowballs(vector<vector<Position>>& field, const vector<Child>& ou
     return Move::IDLE;  // TODO handle this
 }
 
-Move pick_move(int score[], vector <vector<Position>>& field, const vector <Child>& ourTeam,
+Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const vector <Child>& ourTeam,
                const vector <Child>& theirTeam, const vector<pair<int, complex<int>>>& theirLastPosition,
                const Child& us, complex<int>& returnPos) {
     if (us.dazed) return Move::IDLE;
@@ -119,9 +86,11 @@ Move pick_move(int score[], vector <vector<Position>>& field, const vector <Chil
         if (move != Move::IDLE) return move;
     }
 
-    return stockpileSnowballs(field, ourTeam, us, returnPos);
+    complex<int> snowmanPos;
+    SnowmanStage snowmanStage = nearbySnowmanStage(field, us, snowmanPos);
+    if (turnNum <= 50 || snowmanStage != NONE) {
+        return buildSnowman(field, us, ourTeam, returnPos);
+    }
 
-//    if (snowmanPhase()) {
-//        // TODO: build snowmen and prep for end of game
-//    }
+    return stockpileSnowballs(field, ourTeam, us, returnPos);
 }
