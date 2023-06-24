@@ -43,11 +43,11 @@ Move prepareToAttack(vector<vector<Position>>& field, const Child& us, const com
     if (us.holding == HOLD_EMPTY) {  // need to get a snowball to throw
         if (us.standing) return Move::CROUCH;
         if (pickUpSnow(field, us, GROUND_EMPTY, returnPos)) return Move::PICKUP;
+        if (moveRandomly(field, us, returnPos)) return Move::CRAWL;  // in case there's no snow left to pick up
     }
 
     if (!us.standing) return Move::STAND;  // increase mobility
     if (moveToTarget(field, us, targetPos, returnPos)) return Move::RUN;
-
     return Move::IDLE;
 }
 
@@ -72,8 +72,10 @@ Move stockpileSnowballs(vector<vector<Position>>& field, const vector<Child>& ou
         if (moveAwayFrom(field, us, teammatePos, returnPos)) return us.standing ? Move::RUN : Move::CRAWL;
     }
     if (us.holding == HOLD_S3) {
-        cerr << "holding 3 small snowballs already!" << endl;
-        return Move::IDLE;  // TODO figure out something productive for this guy to do
+        cerr << "moving toward center" << endl;
+        if (!us.standing) return Move::STAND;
+        if (moveToTarget(field, us, complex<int>(SIZE / 2, SIZE / 2), returnPos)) return Move::RUN;
+        return Move::IDLE;
     }
 
     if (us.standing) return Move::CROUCH;
