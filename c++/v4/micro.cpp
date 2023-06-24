@@ -42,14 +42,20 @@ bool willHitTarget(const vector <vector<Position>>& field, const Child& us, cons
 // if we want to attack "them", what location should we throw the snowball at?
 // tries all reachable locations because reversing the snowball path is annoying and runs into edge cases
 complex<int> targetToAttack(const vector <vector<Position>>& field, const Child& us, const Child& them) {
+    double bestScore = 0;
+    complex<int> target(INIT, INIT);  // can't use -1 since (-1, -1) is a valid target
     for (int x = -ATTACK_RANGE; x < SIZE + ATTACK_RANGE; x++) {
         for (int y = -ATTACK_RANGE; y < SIZE + ATTACK_RANGE; y++) {
             if (willHitTarget(field, us, them, x, y)) {
-                return complex<int>(x, y);
+                double score = abs(complex<double>(us.x - x, us.y - y));  // further distance -> faster throw
+                if (bestScore < score) {
+                    bestScore = score;
+                    target = complex<int>(x, y);
+                }
             }
         }
     }
-    return complex<int>(INIT, INIT);  // can't use -1 since (-1, -1) is a valid target
+    return target;
 }
 
 // returns how easy it is to attack this target
