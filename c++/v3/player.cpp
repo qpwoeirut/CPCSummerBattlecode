@@ -91,7 +91,7 @@ int main() {
         for (int i = 0; i < CHILDREN; i++) {
             cerr << "Calculating move for child " << i << endl;
             complex<int> pos(0, 0);
-            Move move = pick_move(turnNum, score, field, ourTeam, theirTeam, theirLastPosition, ourTeam[i], pos);
+            Move move = pick_move(turnNum, score, field, ourTeam, theirTeam, theirLastPosition, i, pos);
             print_move(move, pos);
             cerr << "Move for child " << i << ": " << move_to_str(move) << ' ' << pos.real() << ' ' << pos.imag() << endl;
         }
