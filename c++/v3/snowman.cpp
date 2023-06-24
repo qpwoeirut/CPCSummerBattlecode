@@ -71,7 +71,7 @@ Move buildSnowman(vector<vector<Position>>& field, int currentChildIdx, const ve
         return Move::IDLE;
     }
     // find nearestAvailable in case there's a tree in the way
-    complex<int> snowmanPos = nearestAvailable(SNOWMAN_POSITIONS[currentChildIdx][positionIdx]);
+    complex<int> snowmanPos = nearestAvailable(field, SNOWMAN_POSITIONS[currentChildIdx][positionIdx]);
     if (dist >= 1.42) {  // adjacent positions are all sqrt(2) or closer
         if (!us.standing && dist >= 6) return Move::STAND;
         if (moveToTarget(field, us, snowmanPos, returnPos)) return us.standing ? Move::RUN : Move::CRAWL;
