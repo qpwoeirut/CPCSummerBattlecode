@@ -64,18 +64,19 @@ bool dropItem(vector<vector<Position>>& field, const Child& us, complex<int>& re
 }
 
 Move stockpileSnowballs(vector<vector<Position>>& field, const vector<Child>& ourTeam, const Child& us, complex<int>& returnPos) {
+    if (us.holding == HOLD_S3) {
+        cerr << "moving toward center" << endl;
+        if (!us.standing) return Move::STAND;
+        if (moveToTarget(field, us, complex<int>(SIZE / 2, SIZE / 2), returnPos)) return Move::RUN;
+        return Move::IDLE;
+    }
+
     int dist;
     int teammateIdx = nearestTeammate(us, ourTeam, dist);
     if (dist <= 2) {
         cerr << "nearest teammate dist: " << dist << endl;
         complex<int> teammatePos(ourTeam[teammateIdx].x, ourTeam[teammateIdx].y);
         if (moveAwayFrom(field, us, teammatePos, returnPos)) return us.standing ? Move::RUN : Move::CRAWL;
-    }
-    if (us.holding == HOLD_S3) {
-        cerr << "moving toward center" << endl;
-        if (!us.standing) return Move::STAND;
-        if (moveToTarget(field, us, complex<int>(SIZE / 2, SIZE / 2), returnPos)) return Move::RUN;
-        return Move::IDLE;
     }
 
     if (us.standing) return Move::CROUCH;
