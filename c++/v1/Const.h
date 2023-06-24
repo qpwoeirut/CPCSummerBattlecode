@@ -13,6 +13,8 @@ const int SIZE = 31;
 /** Number of children on each team. */
 const int CHILDREN = 4;
 
+const int UNKNOWN = -1;
+
 /** Constants for the objects in each cell of the field */
 const int GROUND_EMPTY = 0;  // Just powdered snow in this space.
 const int GROUND_TREE = 1;   // A tree in this space
@@ -56,5 +58,24 @@ const int MAX_PILE = 9;
 
 /** Snow that's too deep to move through. */
 const int OBSTACLE_HEIGHT = 6;
+
+
+/** Simple representation for a child in the Game. */
+struct Child {
+    // Location of the child.
+    int x, y;
+
+    // True if  the child is standing.
+    bool standing;
+
+    // Side the child is on.
+    int color;
+
+    // What's the child holding.
+    int holding;
+
+    // How many more turns this child is dazed.
+    int dazed;
+};
 
 #endif
