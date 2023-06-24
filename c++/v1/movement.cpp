@@ -55,8 +55,6 @@ bool moveRandomly(vector<vector<Position>>& field, const Child& us, complex<int>
 }
 
 bool moveToTarget(vector<vector<Position>>& field, const Child& us, const complex<int>& targetPos, complex<int>& returnPos) {
-    sort(moves, moves+12);
-
     int n = us.standing ? 12 : 4;
 
     int idx = -1;
