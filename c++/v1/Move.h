@@ -30,11 +30,11 @@ std::string move_to_str(const Move move) {
 }
 
 void print_move(const Move move) {
-    assert(move == IDLE || move == CROUCH || move == STAND);
+    assert(move == IDLE || move == CROUCH || move == STAND || move == CRUSH);
     std::cout << move_to_str(move) << std::endl;
 }
 void print_move(const Move move, const std::complex<int>& pos) {
-    if (move == IDLE || move == CROUCH || move == STAND) {
+    if (move == IDLE || move == CROUCH || move == STAND || move == CRUSH) {
         print_move(move);
     } else {
         std::cout << move_to_str(move) << ' ' << pos.real() << ' ' << pos.imag() << std::endl;
