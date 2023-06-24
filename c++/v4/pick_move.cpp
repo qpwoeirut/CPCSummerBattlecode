@@ -71,7 +71,7 @@ Move stockpileSnowballs(vector<vector<Position>>& field, const vector<Child>& ou
 }
 
 Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const vector <Child>& ourTeam,
-               const vector <Child>& theirTeam, const vector<pair<int, complex<int>>>& theirLastPosition,
+               vector <Child>& theirTeam, const vector<pair<int, complex<int>>>& theirLastPosition,
                int currentChildIdx, complex<int>& returnPos) {
     const Child& us = ourTeam[currentChildIdx];
 
@@ -80,16 +80,15 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
     complex<int> snowmanPos;
     SnowmanStage snowmanStage = nearbySnowmanStage(field, us, snowmanPos);
 
-    complex<int> targetPos;
-    int targetIdx = pickTarget(ourTeam, theirTeam, theirLastPosition, targetPos);  // check if there's a threat/target
-    if (targetIdx != -1) {
-        if (attack(field, us, theirTeam, targetIdx, returnPos)) {
-            return Move::THROW;
-        }
-        if (snowmanStage == SnowmanStage::BASE_AND_BODY) {  // finish snowman
-            return buildSnowman(field, currentChildIdx, ourTeam, returnPos);
-        }
+    if (attack(field, us, theirTeam, theirLastPosition, returnPos)) {
+        return Move::THROW;
+    }
+    if (snowmanStage == SnowmanStage::BASE_AND_BODY) {  // finish snowman
+        return buildSnowman(field, currentChildIdx, ourTeam, returnPos);
+    }
 
+    complex<int> targetPos;
+    if (opponentsInRange(ourTeam, theirLastPosition, targetPos)) {
         Move move = prepareToAttack(field, us, targetPos, returnPos);
         if (move != Move::IDLE) return move;
     }

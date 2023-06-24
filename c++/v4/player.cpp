@@ -44,6 +44,7 @@ Child readChild(const int color) {
         child.holding = (ch - 'a');
         cin >> child.dazed;
     }
+    child.targetClaimed = false;
     return child;
 }
 

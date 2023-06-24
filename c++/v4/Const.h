@@ -79,6 +79,8 @@ struct Child {
     // How many more turns this child is dazed.
     int dazed;
 
+    bool targetClaimed = false;
+
     const int holdingSize() const {
         switch (holding) {
             case HOLD_EMPTY: return 0;  // nothing

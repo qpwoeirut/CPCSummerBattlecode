@@ -19,7 +19,7 @@ bool willHitTarget(const vector <vector<Position>>& field, const Child& us, cons
 
     complex<double> start(us.x, us.y);
     complex<double> target(x, y);
-    if (abs(start - target) > 24 + EPS) return false;
+    if (abs(start - target) > ATTACK_RANGE + EPS) return false;
 
     const int n = max(abs(x - us.x), abs(y - us.y));
     for (int step = 1; step <= n; step++) {  // seems that C++ round already rounds away from 0
@@ -52,59 +52,54 @@ complex<int> targetToAttack(const vector <vector<Position>>& field, const Child&
     return complex<int>(INIT, INIT);  // can't use -1 since (-1, -1) is a valid target
 }
 
-// returns how easy it is to attack this target, on a scale from 0 (impossible) to 10 (very easy)
+// returns how easy it is to attack this target
 // score is based on how close by the target is, how high the target is, and obstacles in the way
 // uses stance (stand/crouch) provided in the "us" Child
-int attackability(const vector <vector<Position>>& field, const Child& us, const Child& them) {
-    if (them.x == UNKNOWN || them.y == UNKNOWN) return false;
+int attackability(const vector<vector<Position>>& field, const Child& us, int themIdx, const vector<Child>& theirTeam, const vector<pair<int, complex<int>>>& theirLastPosition) {
+    if (theirTeam[themIdx].x == UNKNOWN || theirTeam[themIdx].y == UNKNOWN) return 0;
 
-    complex<int> target = targetToAttack(field, us, them);
+    complex<int> target = targetToAttack(field, us, theirTeam[themIdx]);
     if (target.real() == INIT || target.imag() == INIT) return 0;
 
-    complex<int> usPos(us.x, us.y), themPos(them.x, them.y);
+    complex<int> usPos(us.x, us.y), themPos(theirTeam[themIdx].x, theirTeam[themIdx].y);
 
-    int distanceScore = round(20 / (abs(usPos - themPos) + 1));  // prioritize closer targets
-    int dazedBonus = (them.dazed + 1) / 2;
-    return distanceScore + dazedBonus;
+    int distScore = round(1000 / (abs(usPos - themPos) + 1));  // prioritize closer targets
+    int dazedScore = theirTeam[themIdx].dazed > 0 ? 100 : 0;
+    int decayScore = (theirLastPosition[themIdx].first * theirLastPosition[themIdx].first) / 4;
+
+    double nearestOpponentDist; nearestPosition(theirLastPosition[themIdx].second, theirLastPosition, nearestOpponentDist);
+    int isolationScore = (nearestOpponentDist * nearestOpponentDist) / 10;
+    int score = distScore + dazedScore + isolationScore - decayScore;
+    if (theirTeam[themIdx].targetClaimed) score /= 5;  // spread out shots to maximize time opponents are dazed
+    return score;
 }
 
-int pickTarget(const vector<Child>& ourTeam, const vector<Child>& theirTeam, const vector<pair<int, complex<int>>>& theirLastPosition, complex<int>& targetPos) {
-    int idx = -1, targetScore = 100;  // set a threshold to avoid attacking unappealing targets
-    for (int i = 0; i < theirTeam.size(); i++) {
-        int x = theirLastPosition[i].second.real(), y = theirLastPosition[i].second.imag();
-        if (x == UNKNOWN || y == UNKNOWN) continue;
-
-        complex<double> theirPos(x, y);
-        double dist = 0;
-        for (const Child& us: ourTeam) {
-            complex<double> ourPos(us.x, us.y);
-            dist = max(dist, abs(theirPos - ourPos));
-        }
-        int distScore = 2000 / dist;
-        int dazedScore = theirTeam[i].dazed * 100;
-        int decayScore = theirLastPosition[i].first / 4;
-        // TODO: try attacking opponents that seem isolated?
-        int score = distScore + dazedScore - (decayScore * decayScore);
-        if (targetScore < score) {
-            targetScore = score;
-            idx = i;
-            targetPos = theirPos;
+bool opponentsInRange(const vector<Child>& ourTeam, const vector<pair<int, complex<int>>>& theirLastPosition, complex<int>& targetPos) {
+    int bestScore = 18;
+    for (const Child& us: ourTeam) {
+        const complex<int> usPos(us.x, us.y);
+        for (int i = 0; i < theirLastPosition.size(); i++) {
+            double dist = abs(theirLastPosition[i].second - usPos);
+            double score = dist + theirLastPosition[i].first * theirLastPosition[i].first;
+            if (bestScore > score) {
+                bestScore = score;
+                targetPos = theirLastPosition[i].second;
+            }
         }
     }
-    return idx;
+    return bestScore < 18;
 }
 
-bool attack(const vector<vector<Position>>& field, const Child& us, const vector<Child>& theirTeam, int targetIdx, complex<int>& returnPos) {
+bool attack(const vector<vector<Position>>& field, const Child& us, vector<Child>& theirTeam, const vector<pair<int, complex<int>>>& theirLastPosition, complex<int>& returnPos) {
     if (canAttack(us)) {
         vector<int> attackScore(theirTeam.size());
         for (int i = 0; i < theirTeam.size(); i++) {
-            attackScore[i] = attackability(field, us, theirTeam[i]);
+            attackScore[i] = attackability(field, us, i, theirTeam, theirLastPosition);
         }
         int attackIdx = max_element(attackScore.begin(), attackScore.end()) - attackScore.begin();
-        if (attackScore[targetIdx] > 0) attackIdx = targetIdx;  // override
-
         if (attackScore[attackIdx] > 0) {  // attack!
             returnPos = targetToAttack(field, us, theirTeam[attackIdx]);
+            theirTeam[attackIdx].targetClaimed = true;
             return true;
         }
     }
