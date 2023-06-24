@@ -38,7 +38,7 @@ Move buildPart(vector<vector<Position>>& field, const Child& us, const complex<i
 Move buildSnowman(vector<vector<Position>>& field, const Child& us, const vector<Child>& ourTeam, complex<int>& returnPos) {
     int dist;
     int teammateIdx = nearestTeammate(us, ourTeam, dist);
-    if (dist <= 2) {
+    if (dist <= 3) {
         complex<int> teammatePos(ourTeam[teammateIdx].x, ourTeam[teammateIdx].y);
         if (moveAwayFrom(field, us, teammatePos, returnPos)) return us.standing ? Move::RUN : Move::CRAWL;
     }
