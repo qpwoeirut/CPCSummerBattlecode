@@ -33,15 +33,15 @@ Move prepareToAttack(vector<vector<Position>>& field, const Child& us, const com
     }
 
     if (!us.standing) return Move::STAND;  // increase mobility
-    if (moveToTarget(field, us, targetPos, returnPos)) return Move::RUN;
-    if (moveRandomly(field, us, returnPos)) return Move::RUN;
+    if (moveToTarget(field, us, targetPos, returnPos)) return movement(us);
+    if (moveRandomly(field, us, returnPos)) return movement(us);
     return Move::IDLE;
 }
 
 Move stockpileSnowballs(vector<vector<Position>>& field, const vector<Child>& ourTeam, const Child& us, complex<int>& returnPos) {
     if (us.holding == HOLD_S3) {
         if (!us.standing) return Move::STAND;
-        if (moveToTarget(field, us, complex<int>(SIZE / 2, SIZE / 2), returnPos)) return Move::RUN;
+        if (moveToTarget(field, us, complex<int>(SIZE / 2, SIZE / 2), returnPos)) return movement(us);
         return Move::IDLE;
     }
 
@@ -49,7 +49,7 @@ Move stockpileSnowballs(vector<vector<Position>>& field, const vector<Child>& ou
     int teammateIdx = nearestTeammate(us, ourTeam, dist);
     if (dist <= 2) {
         complex<int> teammatePos(ourTeam[teammateIdx].x, ourTeam[teammateIdx].y);
-        if (moveAwayFrom(field, us, teammatePos, returnPos)) return us.standing ? Move::RUN : Move::CRAWL;
+        if (moveAwayFrom(field, us, teammatePos, returnPos)) return movement(us);
     }
 
     if (us.standing) return Move::CROUCH;

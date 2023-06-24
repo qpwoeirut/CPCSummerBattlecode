@@ -28,6 +28,10 @@ std::string move_to_str(const Move move) {
     throw "Enum did not match any options; this should never happen";
 }
 
+Move movement(const Child& us) {
+    return us.standing ? Move::RUN : Move::CRAWL;
+}
+
 void print_move(const Move move) {
     assert(move == IDLE || move == CROUCH || move == STAND || move == CRUSH);
     std::cout << move_to_str(move) << std::endl;

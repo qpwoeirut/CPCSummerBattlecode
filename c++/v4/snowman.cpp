@@ -78,7 +78,7 @@ Move buildSnowman(vector<vector<Position>>& field, int currentChildIdx, const ve
     complex<int> snowmanPos = nearestAvailable(field, SNOWMAN_POSITIONS[currentChildIdx][positionIdx]);
     if (dist >= 1.42) {  // adjacent positions are all sqrt(2) or closer
         if (!us.standing && dist >= 6) return Move::STAND;
-        if (moveToTarget(field, us, snowmanPos, returnPos)) return us.standing ? Move::RUN : Move::CRAWL;
+        if (moveToTarget(field, us, snowmanPos, returnPos)) return movement(us);
     }
 
     const SnowmanStage stage = snowmanStageAt(field, snowmanPos);
@@ -94,6 +94,6 @@ Move buildSnowman(vector<vector<Position>>& field, int currentChildIdx, const ve
             cerr << "ERROR: found a built snowman for child " << currentChildIdx << " at " << snowmanPos.real() << ',' << snowmanPos.imag() << endl;
             break;
     }
-    if (moveRandomly(field, us, returnPos)) return us.standing ? Move::RUN : Move::CRAWL;
+    if (moveRandomly(field, us, returnPos)) return movement(us);
     return Move::IDLE;
 }
