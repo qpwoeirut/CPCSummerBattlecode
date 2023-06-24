@@ -43,6 +43,39 @@ int nearestTeammate(const Child& us, const vector<Child>& ourTeam, int& minDist)
     return idx;
 }
 
+int nearestPosition(const vector<vector<Position>>& field, const Child& us, const vector<complex<int>>& positions, int avoid, double& minDist) {
+    int idx = -1;
+    minDist = INIT;
+    complex<int> startPos(us.x, us.y);
+    for (int i = 0; i < positions.size(); i++) {
+        if (field[positions[i].real()][positions[i].imag()].ground == avoid) continue;
+        double dist = abs(positions[i] - startPos);
+        if (minDist > dist) {
+            minDist = dist;
+            idx = i;
+        }
+    }
+    return idx;
+}
+
+complex<int> nearestAvailable(const vector<vector<Position>>& field, const complex<int>& position) {
+    double bestDist = INIT;
+    complex<int> bestPos(-1, -1);
+
+    for (int x = 0; x < SIZE; x++) {
+        for (int y = 0; y < SIZE; y++) {
+            if (field[x][y].ground != GROUND_TREE) {
+                double dist = abs(position - complex<int>(x, y));
+                if (bestDist > dist) {
+                    bestDist = dist;
+                    bestPos = complex<int>(x, y);
+                }
+            }
+        }
+    }
+    return bestPos;
+}
+
 int countAdjacent(const vector<vector<Position>>& field, const Child& us, int value) {
     int ct = 0;
     for (int x = us.x - 1; x <= us.x + 1; x++) {
