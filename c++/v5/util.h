@@ -134,12 +134,11 @@ vector<complex<int>> positionsOf(const vector<vector<Position>>& field, int grou
     return positions;
 }
 
-// check if we've been hit recently
-bool theyCanSeeUs(const vector<vector<Position>>& field, const Child& us, const vector<Child>& theirTeam) {
+bool theyCanSeeUsSoon(const vector<vector<Position>>& field, const Child& us, const vector<Child>& theirTeam) {
     vector<complex<int>> theirSnowmen = positionsOf(field, GROUND_SMB);
-    if (us.dazed > 1) return true;
+    if (us.dazed > 1) return true;  // check if we've been hit recently
     for (const Child& them: theirTeam) {
-        if (distanceBetween(us, them) <= 8) return true;
+        if (distanceBetween(us, them) <= 10) return true;  // set to 10 to account for movement
     }
     for (const complex<int>& snowman: theirSnowmen) {
         if (distanceBetween(us, snowman) <= 8) return true;

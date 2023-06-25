@@ -17,10 +17,10 @@ using namespace std;
 
 const complex<int> CHILD_POST[4][4] = {
         {
-                complex<int> (6, 12),
+                complex<int> (5, 13),
                 complex<int> (7, 10),
                 complex<int> (10, 7),
-                complex<int> (12, 6)
+                complex<int> (13, 5)
         },
         {
                 complex<int> (13, 6),
@@ -127,7 +127,7 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
         if (move != Move::IDLE) return move;
     }
     if (turnNum <= 80) {
-        if (theyCanSeeUs(field, us, theirTeam)) {
+        if (theyCanSeeUsSoon(field, us, theirTeam)) {
             if (moveToTarget(field, us, complex<int>(1, 1), returnPos)) return movement(us);
         } else {
             if (moveToTarget(field, us, CHILD_POST[0][currentChildIdx], returnPos)) return movement(us);
