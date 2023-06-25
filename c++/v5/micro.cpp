@@ -125,20 +125,20 @@ int attackability(const vector<vector<Position>>& field, const Child& us, int th
     return score;
 }
 
-bool opponentsInRange(const vector<Child>& ourTeam, const vector<pair<int, complex<int>>>& theirLastPosition, complex<int>& targetPos) {
-    int bestScore = 18;
+double threatScore(const vector<Child>& ourTeam, const vector<pair<int, complex<int>>>& theirLastPosition, complex<int>& targetPos) {
+    double maxScore = 0;
     for (const Child& us: ourTeam) {
         const complex<int> usPos(us.x, us.y);
         for (int i = 0; i < theirLastPosition.size(); i++) {
-            double dist = abs(theirLastPosition[i].second - usPos);
-            double score = dist + theirLastPosition[i].first * theirLastPosition[i].first;
-            if (bestScore > score) {
-                bestScore = score;
+            double dist = abs(theirLastPosition[i].second - usPos) + 1;
+            double score = (1000 / dist) - (theirLastPosition[i].first * theirLastPosition[i].first) / 4;
+            if (maxScore < score) {
+                maxScore = score;
                 targetPos = theirLastPosition[i].second;
             }
         }
     }
-    return bestScore < 18;
+    return maxScore;
 }
 
 bool attack(const vector<vector<Position>>& field, const Child& us, vector<Child>& theirTeam, const vector<pair<int, complex<int>>>& theirLastPosition, complex<int>& returnPos) {

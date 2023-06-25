@@ -18,14 +18,14 @@ const vector<complex<int>> SNOWMAN_POSITIONS[] = {
         },
         vector<complex<int>>{
                 complex<int>(5, 5),
-                complex<int>(17, 24),
                 complex<int>(14, 18),
+                complex<int>(17, 24),
                 complex<int>(24, 28)
         },
         vector<complex<int>>{
                 complex<int>(9, 9),
-                complex<int>(24, 17),
                 complex<int>(18, 14),
+                complex<int>(24, 17),
                 complex<int>(28, 24)
         },
         vector<complex<int>>{
@@ -72,17 +72,10 @@ Move buildPart(vector<vector<Position>>& field, const Child& us, const complex<i
     return Move::IDLE;
 }
 
-Move buildSnowman(vector<vector<Position>>& field, int currentChildIdx, const vector<Child>& ourTeam, complex<int>& returnPos) {
+Move buildSnowmanAtLocation(vector<vector<Position>>& field, int currentChildIdx, const vector<Child>& ourTeam, const complex<int>& snowmanPos, complex<int>& returnPos) {
     const Child& us = ourTeam[currentChildIdx];
 
-    double dist;
-    int positionIdx = nearestPosition(field, us, SNOWMAN_POSITIONS[currentChildIdx], GROUND_SMR, dist);
-    if (positionIdx == -1) {
-        cerr << "ERROR: unable to find snowman position for child " << currentChildIdx << endl;
-        return Move::IDLE;
-    }
-    // find nearestAvailable in case there's a tree in the way
-    complex<int> snowmanPos = nearestAvailable(field, SNOWMAN_POSITIONS[currentChildIdx][positionIdx]);
+    double dist = distanceBetween(us, snowmanPos);
     if (dist >= 1.42) {  // adjacent positions are all sqrt(2) or closer
         if (!us.standing && dist >= 6) return Move::STAND;
         if (moveToTarget(field, us, snowmanPos, returnPos)) return movement(us);
@@ -103,4 +96,19 @@ Move buildSnowman(vector<vector<Position>>& field, int currentChildIdx, const ve
     }
     if (moveRandomly(field, us, returnPos)) return movement(us);
     return Move::IDLE;
+}
+
+Move buildSnowman(vector<vector<Position>>& field, int currentChildIdx, const vector<Child>& ourTeam, complex<int>& returnPos) {
+    const Child& us = ourTeam[currentChildIdx];
+
+    double dist;
+    int positionIdx = nearestPosition(field, us, SNOWMAN_POSITIONS[currentChildIdx], GROUND_SMR, dist);
+    if (positionIdx == -1) {
+        cerr << "ERROR: unable to find snowman position for child " << currentChildIdx << endl;
+        return Move::IDLE;
+    }
+    // find nearestAvailable in case there's a tree in the way
+    complex<int> snowmanPos = nearestAvailable(field, SNOWMAN_POSITIONS[currentChildIdx][positionIdx]);
+
+    return buildSnowmanAtLocation(field, currentChildIdx, ourTeam, snowmanPos, returnPos);
 }

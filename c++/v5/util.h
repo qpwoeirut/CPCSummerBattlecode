@@ -112,4 +112,39 @@ bool findAdjacent(const vector<vector<Position>>& field, const Child& us, int va
     return false;
 }
 
+double distanceBetween(const Child& us, const Child& them) {
+    complex<double> usPos(us.x, us.y), themPos(them.x, them.y);
+    return abs(usPos - themPos);
+}
+
+double distanceBetween(const Child& us, const complex<int>& position) {
+    complex<double> usPos(us.x, us.y), otherPos(position.real(), position.imag());
+    return abs(usPos - otherPos);
+}
+
+vector<complex<int>> positionsOf(const vector<vector<Position>>& field, int groundValue) {
+    vector<complex<int>> positions;
+    for (int x = 0; x < SIZE; x++) {
+        for (int y = 0; y < SIZE; y++) {
+            if (field[x][y].ground == groundValue) {
+                positions.emplace_back(x, y);
+            }
+        }
+    }
+    return positions;
+}
+
+// check if we've been hit recently
+bool theyCanSeeUs(const vector<vector<Position>>& field, const Child& us, const vector<Child>& theirTeam) {
+    vector<complex<int>> theirSnowmen = positionsOf(field, GROUND_SMB);
+    if (us.dazed > 1) return true;
+    for (const Child& them: theirTeam) {
+        if (distanceBetween(us, them) <= 8) return true;
+    }
+    for (const complex<int>& snowman: theirSnowmen) {
+        if (distanceBetween(us, snowman) <= 8) return true;
+    }
+    return false;
+}
+
 #endif //UTIL_H

@@ -61,13 +61,13 @@ bool moveToTarget(vector<vector<Position>>& field, const Child& us, const comple
     int n = us.standing ? 12 : 4;
 
     int idx = -1;
-    double minDist = INIT;
+    double minDist = abs(complex<double>{us.x - targetPos.real(), us.y - targetPos.imag()});
     for (int i = 0; i < n; i++) {
         int x = us.x + chX[i], y = us.y + chY[i];
         if (canMoveTo(field, us, x, y)) {
-            complex<int> result(x, y);
-            double dist = abs(targetPos - result);
-            if (minDist >= dist) {
+            complex<double> movement(x - targetPos.real(), y - targetPos.imag());
+            double dist = abs(movement);
+            if (minDist > dist) {
                 minDist = dist;
                 idx = i;
             }
