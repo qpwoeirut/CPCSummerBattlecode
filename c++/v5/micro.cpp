@@ -115,13 +115,16 @@ int attackability(const vector<vector<Position>>& field, const Child& us, int th
     complex<int> usPos(us.x, us.y), themPos(theirTeam[themIdx].x, theirTeam[themIdx].y);
 
     int distScore = round(1000 / (abs(usPos - themPos) + 1));  // prioritize closer targets
-    int dazedScore = theirTeam[themIdx].dazed > 0 ? 100 : 0;
+    int dazedScore = theirTeam[themIdx].dazed > 0 ? 100 : 0;  // dazed players can't dodge
     int decayScore = (theirLastPosition[themIdx].first * theirLastPosition[themIdx].first) / 4;
 
-    double nearestOpponentDist; nearestPosition(theirLastPosition[themIdx].second, theirLastPosition, nearestOpponentDist);
-    int isolationScore = (nearestOpponentDist * nearestOpponentDist) / 10;
-    int score = distScore + dazedScore + isolationScore - decayScore;
-    if (theirTeam[themIdx].targetClaimed) score /= 5;  // spread out shots to maximize time opponents are dazed
+    // spread out shots to maximize time opponents are dazed
+    if (theirTeam[themIdx].targetClaimed) {
+        dazedScore = 0;
+        distScore /= 4;
+    }
+
+    int score = distScore + dazedScore - decayScore;
     return score;
 }
 

@@ -58,19 +58,6 @@ int nearestPosition(const vector<vector<Position>>& field, const Child& us, cons
     return idx;
 }
 
-int nearestPosition(const complex<int> startPos, const vector<pair<int, complex<int>>>& positions, double& minDist) {
-    int idx = -1;
-    minDist = INIT;
-    for (int i = 0; i < positions.size(); i++) {
-        double dist = abs(positions[i].second - startPos);
-        if (minDist > dist) {
-            minDist = dist;
-            idx = i;
-        }
-    }
-    return idx;
-}
-
 complex<int> nearestAvailable(const vector<vector<Position>>& field, const complex<int>& position) {
     double bestDist = INIT;
     complex<int> bestPos(-1, -1);
