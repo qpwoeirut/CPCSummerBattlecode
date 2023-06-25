@@ -159,14 +159,11 @@ bool attack(const vector<vector<Position>>& field, const Child& us, vector<Child
 
 bool attackSnowman(const vector<vector<Position>>& field, const Child& us, complex<int>& returnPos) {
     if (canAttack(us)) {
-        cerr << "attackSnowman us: " << us.x << ',' << us.y << ' ' << us.standing << endl;
         for (int x = 0; x < SIZE; x++) {
             for (int y = 0; y < SIZE; y++) {
                 if (field[x][y].ground == GROUND_SMB) {
-                    cerr << x << ' ' << y << ' ' << field[x][y].height << endl;
                     complex<int> target = targetToAttack(field, us, complex<int>(x, y), field[x][y].height);
                     if (target.real() != INIT && target.imag() != INIT) {
-                        cerr << target.real() << ' ' << target.imag() << endl;
                         returnPos = target;
                         return true;
                     }
