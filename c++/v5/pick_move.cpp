@@ -17,10 +17,10 @@ using namespace std;
 
 const complex<int> CHILD_POST[4][4] = {
         {
-                complex<int> (6, 13),
-                complex<int> (8, 10),
-                complex<int> (10, 8),
-                complex<int> (13, 6)
+                complex<int> (6, 12),
+                complex<int> (7, 10),
+                complex<int> (10, 7),
+                complex<int> (12, 6)
         },
         {
                 complex<int> (13, 6),
