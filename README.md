@@ -13,3 +13,4 @@ Code for my bot for the Gunn Competitive Programming Club Summer Battlecode Chal
 * Build a tunneling fort bot
   * Snowmen of height 9 are very difficult to kill because snowballs drop throughout the throw
   * Advancing the children forward on the field will be difficult because they'll be exposed while building
+* Implement a Team Building Activity (collaborating on a snowman)
