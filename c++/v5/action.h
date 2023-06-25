@@ -36,6 +36,7 @@ bool dropItemTargeted(const vector<vector<Position>>& field, const Child& us, co
 bool dropItemAvoid(const vector<vector<Position>>& field, const Child& us, const complex<int>& avoid, complex<int>& returnPos) {
     for (int x = us.x - 1; x <= us.x + 1; x++) {
         for (int y = us.y - 1; y <= us.y + 1; y++) {
+            if (x == avoid.real() && y == avoid.imag()) continue;
             complex<int> targetPos(x, y);
             // prioritize dropping on empty ground
             if (field[x][y].ground == GROUND_EMPTY && dropItemTargeted(field, us, targetPos, returnPos)) {
@@ -45,6 +46,7 @@ bool dropItemAvoid(const vector<vector<Position>>& field, const Child& us, const
     }
     for (int x = us.x - 1; x <= us.x + 1; x++) {
         for (int y = us.y - 1; y <= us.y + 1; y++) {
+            if (x == avoid.real() && y == avoid.imag()) continue;
             complex<int> targetPos(x, y);
             if (dropItemTargeted(field, us, targetPos, returnPos)) {
                 return true;
