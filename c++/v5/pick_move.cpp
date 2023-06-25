@@ -76,8 +76,8 @@ Move stockpileSnowballs(vector<vector<Position>>& field, const vector<Child>& ou
         if (moveAwayFrom(field, us, teammatePos, returnPos)) return movement(us);
     }
 
-    if (us.standing) return Move::CROUCH;
     if (us.holding == HOLD_P1) return Move::CRUSH;
+    if (us.standing) return Move::CROUCH;
 
     // create snowballs until we can pick up 3 at once
     int heldSnowballs = us.holding == HOLD_S1 ? 1 : (us.holding == HOLD_S2 ? 2 : 0);
@@ -117,6 +117,7 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
 
     complex<int> targetPos;
     const double threat = threatScore(ourTeam, theirLastPosition, targetPos);
+    cerr << "threat = " << threat << endl;
     if (threat == 0 && turnNum >= 50) {
         Move move = buildSnowman(field, currentChildIdx, ourTeam, returnPos);
         if (move != Move::IDLE) return move;
@@ -126,28 +127,27 @@ Move pick_move(int turnNum, int score[], vector <vector<Position>>& field, const
         Move move = prepareToAttack(field, us, returnPos);
         if (move != Move::IDLE) return move;
     }
-    if (turnNum <= 80) {
+    if (turnNum <= 90) {
         if (theyCanSeeUsSoon(field, us, theirTeam)) {
-            if (moveToTarget(field, us, complex<int>(1, 1), returnPos)) return movement(us);
+            int _; int theirIdx = nearestTeammate(us, theirTeam, _);
+            complex<int> theirPos(theirTeam[theirIdx].x, theirTeam[theirIdx].y);
+            if (moveAwayFrom(field, us, theirPos, returnPos)) return movement(us);
         } else {
             if (moveToTarget(field, us, CHILD_POST[0][currentChildIdx], returnPos)) return movement(us);
         }
-    }
-    if (80 < turnNum && turnNum <= 105) {
+    } else if (turnNum <= 120) {
         if (currentChildIdx == 3) {
             Move move = buildSnowman(field, currentChildIdx, ourTeam, returnPos);
             if (move != Move::IDLE) return move;
         }
         if (moveToTarget(field, us, CHILD_POST[1][currentChildIdx], returnPos)) return movement(us);
-    }
-    if (105 < turnNum && turnNum <= 130) {
+    } else if (turnNum <= 150) {
         if (currentChildIdx == 2) {
             Move move = buildSnowman(field, currentChildIdx, ourTeam, returnPos);
             if (move != Move::IDLE) return move;
         }
         if (moveToTarget(field, us, CHILD_POST[2][currentChildIdx], returnPos)) return movement(us);
-    }
-    if (155 < turnNum && turnNum <= 180) {
+    } else if (turnNum <= 180) {
         if (currentChildIdx == 1) {
             Move move = buildSnowman(field, currentChildIdx, ourTeam, returnPos);
             if (move != Move::IDLE) return move;
